@@ -3,6 +3,9 @@ name: Health Check
 on:
   schedule:
     - cron: "5,10,15,20 * * * *"
+  push:
+    branches:
+      - main
 
 jobs:
   health_check:
