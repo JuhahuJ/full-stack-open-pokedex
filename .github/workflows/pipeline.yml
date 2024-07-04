@@ -40,7 +40,7 @@ jobs:
           retention-days: 30
 
       - name: Trigger deployment
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
@@ -55,5 +55,5 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: anothrNick/github-tag-action@1.67.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN && !contains(join(toJson(github.event.commits.*.message)), '#skip') }}
           DEFAULT_BUMP: patch
