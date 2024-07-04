@@ -1,0 +1,30 @@
+name: Health Check
+
+on:
+  schedule:
+    - cron: "5,10,15,20 * * * *"
+
+jobs:
+  health_check:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check health
+        uses: Jtalk/url-health-check-action@v4
+        with:
+          url: https://full-stack-open-pokedex-ehls.onrender.com/health
+
+      - name: Failed health check
+        uses: rjstone/discord-webhook-notify@v1
+        if: failure()
+        with:
+          severity: error
+          details: the build was broken by commit ${{ github.event.head_commit.url }} from ${{ github.event.head_commit.author.username }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Successfull health check
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+          severity: info
+          details: Successfull health check
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
